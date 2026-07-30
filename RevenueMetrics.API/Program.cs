@@ -3,12 +3,14 @@ using RevenueMetrics.Infrastructure.Persistence;
 using RevenueMetrics.Application.Interfaces;
 using RevenueMetrics.Application.Services;
 using RevenueMetrics.Infrastructure.Repositories;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
 
 
 // Register PostgreSQL / Supabase
@@ -32,6 +34,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
 	app.MapOpenApi();
+	app.MapScalarApiReference();
 }
 
 app.UseHttpsRedirection();

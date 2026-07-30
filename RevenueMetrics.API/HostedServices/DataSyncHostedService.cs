@@ -34,7 +34,7 @@ public class DataSyncHostedService : BackgroundService
 				_logger.LogCritical(ex, "Fatal error inside DataSyncHostedService loop.");
 			}
 
-			await Task.Delay(TimeSpan.FromMinutes(5), stoppingToken);
+			await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
 		}
 		
 		_logger.LogInformation("DataSyncHostedService is stopping.");

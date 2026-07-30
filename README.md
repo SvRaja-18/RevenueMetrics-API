@@ -5,15 +5,17 @@ This repository contains the solution for the Full-Stack Backend Assignment. It 
 ## Features
 
 ### Problem 1: Sync Pipeline
+
 - **Sources**: Ingests data from HubSpot CRM, Google Calendar, and Stripe.
 - **Normalization**: Maps diverse API payloads into a single, unified `Transaction` schema.
 - **Incremental Fetches**: Tracks cursors for each source via a `SyncState` database table.
-- **Resilience**: 
+- **Resilience**:
   - If a source throws an error (e.g., HTTP 500), the `SyncOrchestrator` logs it, isolates the fault, and proceeds to the next source without wedging the job.
   - If an API rejects a cursor (e.g. Google Calendar 410 Gone), the pipeline catches the specific exception, clears the cursor, and safely falls back to a full backfill on the next run.
 - **Idempotency**: Upserts records based on a composite key (`Source` + `SourceTransactionId`) to guarantee zero duplicate rows.
 
 ### Problem 2: Metrics Service
+
 - **Deterministic Number**: The `RevenueLedger` domain entity acts as the single source of truth, computing revenue using a strict allow-list of canonical statuses (`paid`, `completed`, `succeeded`).
 - **Compiler-Enforced Consistency**: To guarantee that no one accidentally adds a "second way" of calculating revenue, the Repository pattern was refactored to return a strongly typed `RevenueLedger` rather than a standard `List<Transaction>`. This structural constraint makes it impossible for developers to query transactions by date without passing through the canonical calculation.
 - **Two Views**: Exposes both a summary endpoint (`/api/metrics/revenue`) and a breakdown endpoint (`/api/metrics/revenue/breakdown?interval=week`). Both views utilize the exact same ledger, guaranteeing they never drift.
@@ -31,10 +33,12 @@ This repository contains the solution for the Full-Stack Backend Assignment. It 
    ```bash
    dotnet run --project RevenueMetrics.API
    ```
-The background service (`DataSyncHostedService`) will automatically wake up and begin pulling data every 5 minutes.
+   The background service (`DataSyncHostedService`) will automatically wake up and begin pulling data every 5 minutes.
 
 ## Deployment (Render)
+
 A `Dockerfile` is included at the root of the project. To deploy on Render:
+
 1. Create a new "Web Service" connected to this GitHub repo.
 2. Select "Docker" as the runtime environment.
 3. Add your environment variables in the Render dashboard:
@@ -43,7 +47,19 @@ A `Dockerfile` is included at the root of the project. To deploy on Render:
    - `Stripe__SecretKey`
 
 ## Sources & References
+
 - [HubSpot CRM API Documentation](https://developers.hubspot.com/docs/api/crm/deals)
 - [Google Calendar .NET SDK](https://developers.google.com/calendar/api/quickstart/dotnet)
 - [Stripe API Documentation](https://stripe.com/docs/api)
 - [EF Core PostgreSQL Provider (Npgsql)](https://www.npgsql.org/efcore/)
+
+## Tradeoffs Made
+
+- **Idempotency Strategy**: Upserts are currently handled via Entity Framework tracked entities inside a sequential loop. While this guarantees no duplicates for a single background service, a high-concurrency distributed setup would benefit from native PostgreSQL `ON CONFLICT DO UPDATE` to prevent race conditions at the database level.
+- **Authentication**: For simplicity in this assignment, endpoints are exposed without JWT authentication, allowing direct testing via curl/Postman.
+- **Data Deletion**: The pipeline natively handles inserts and updates, but hard-deleted records in the source systems will currently persist in our database unless a full backfill or a separate deletion-tracking webhook is implemented.
+
+## AI Usage
+
+- **Antigravity AI (Google DeepMind)**: Used as a pair-programming agent to design the architecture, generate Dockerfiles, configure the EF Core schema, and troubleshoot .NET 9 Scalar UI configuration issues.
+- **Chat History**: - https://chatgpt.com/share/6a6ad79e-8040-83ee-83ab-a14fdb4a1f97

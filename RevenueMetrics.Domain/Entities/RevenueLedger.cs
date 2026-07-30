@@ -14,14 +14,14 @@ public class RevenueLedger
 	public decimal TotalCollectedRevenue()
 	{
 		return _transactions
-			.Where(x => RevenuePolicy.IsCollected(x.SourceStatus))
+			.Where(x => RevenuePolicy.IsCollected(x.CanonicalStatus))
 			.Sum(x => x.Amount);
 	}
 
 	public IReadOnlyList<RevenueBreakdownItem> GetCollectedRevenueBreakdown(string interval)
 	{
 		var collectedTransactions = _transactions
-			.Where(x => RevenuePolicy.IsCollected(x.SourceStatus));
+			.Where(x => RevenuePolicy.IsCollected(x.CanonicalStatus));
 
 		IEnumerable<IGrouping<string, Transaction>> grouped;
 
