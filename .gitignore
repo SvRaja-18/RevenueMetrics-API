@@ -1,0 +1,13 @@
+# Visual Studio / .NET
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+appsettings.Development.json
+
+# Google API Credentials
+credentials.json
+token.json
