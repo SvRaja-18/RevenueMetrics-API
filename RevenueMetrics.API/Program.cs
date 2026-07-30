@@ -2,8 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using RevenueMetrics.Infrastructure.Persistence;
 using RevenueMetrics.Application.Interfaces;
 using RevenueMetrics.Application.Services;
+using RevenueMetrics.Application.Services;
 using RevenueMetrics.Infrastructure.Repositories;
 using Scalar.AspNetCore;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +13,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+	options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+	options.KnownNetworks.Clear();
+	options.KnownProxies.Clear();
+});
 
 
 // Register PostgreSQL / Supabase
@@ -29,6 +38,8 @@ builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<RevenueCalculator>();
 
 var app = builder.Build();
+
+app.UseForwardedHeaders();
 
 // Configure the HTTP request pipeline.
 app.MapOpenApi();
