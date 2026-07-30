@@ -45,6 +45,9 @@ app.UseForwardedHeaders();
 app.MapOpenApi();
 app.MapScalarApiReference();
 
+// Redirect root to Scalar UI
+app.MapGet("/", () => Results.Redirect("/scalar/v1"));
+
 app.UseHttpsRedirection();
 
 app.MapControllers();
