@@ -4,6 +4,8 @@
 
 **Repository:** [https://github.com/SvRaja-18/RevenueMetrics-API](https://github.com/SvRaja-18/RevenueMetrics-API)
 
+**Implementation Report:** [https://github.com/SvRaja-18/RevenueMetrics-API/blob/main/implementation_report.md](https://github.com/SvRaja-18/RevenueMetrics-API/blob/main/implementation_report.md)
+
 This repository contains the solution for the Full-Stack Backend Assignment. It features a fault-tolerant, idempotent data sync pipeline and a deterministic metrics calculation service built using .NET 9 Clean Architecture.
 
 ## Features
