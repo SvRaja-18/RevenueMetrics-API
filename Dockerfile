@@ -19,4 +19,8 @@ RUN dotnet publish "RevenueMetrics.API.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+# Fix for Render inotify limit crash
+ENV DOTNET_USE_POLLING_FILE_WATCHER=true
+ENV ASPNETCORE_hostBuilder__reloadConfigOnChange=false
 ENTRYPOINT ["dotnet", "RevenueMetrics.API.dll"]
