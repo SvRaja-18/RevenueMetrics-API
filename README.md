@@ -1,5 +1,7 @@
 # RevenueMetrics API & Sync Pipeline
 
+**Live Deployment (API Docs):** [https://revenuemetrics.onrender.com/scalar/v1](https://revenuemetrics.onrender.com/scalar/v1)
+
 This repository contains the solution for the Full-Stack Backend Assignment. It features a fault-tolerant, idempotent data sync pipeline and a deterministic metrics calculation service built using .NET 9 Clean Architecture.
 
 ## Features
